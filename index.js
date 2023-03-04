@@ -94,5 +94,7 @@ const start = async () => {
     }
   });
 };
-
 start();
+module.exports = async (request, response) => {
+  response.send("OK");
+};
