@@ -1,3 +1,4 @@
+const http = require("http");
 const TelegramApi = require("node-telegram-bot-api");
 
 const token = "5982640356:AAEhL1azXkVJmA0I2VqHiB-aVDcVJCCX0gM";
@@ -95,7 +96,13 @@ const start = async () => {
   });
 };
 
-module.exports = async (request, response) => {
+const port = 3000;
+
+const server = http.createServer((req, res) => {
   start();
-  response.send("OK");
-};
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "text/plain");
+  res.end("Hello World");
+});
+
+server.listen(port);
