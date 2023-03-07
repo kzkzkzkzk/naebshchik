@@ -1,4 +1,6 @@
-const http = require("http");
+const express = require("express");
+const { webhookCallback } = require("grammy");
+
 const TelegramApi = require("node-telegram-bot-api");
 
 const token = "5982640356:AAEhL1azXkVJmA0I2VqHiB-aVDcVJCCX0gM";
@@ -36,7 +38,7 @@ const a = async (chatId) => {
   );
 };
 
-const start = async () => {
+const start = () => {
   bot.on("message", async (msg) => {
     const text = msg.text;
     const chatId = msg.chat.id;
@@ -61,16 +63,17 @@ const start = async () => {
     if (data === "makemoney") {
       await bot.sendPhoto(
         chatId,
-        `https://fakeface.rest/face/view?a=${new Date()}`
+        `https://fakeface.rest/face/view?a=${new Date()}`,
+        {
+          caption: "Это мужчина или женщина? 🤔",
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: "Мужчина", callback_data: "0000000000" }],
+              [{ text: "Женщина", callback_data: "1111111111" }],
+            ],
+          },
+        }
       );
-      return bot.sendMessage(chatId, "Это мужчина или женщина? 🤔", {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "Мужчина", callback_data: "0000000000" }],
-            [{ text: "Женщина", callback_data: "1111111111" }],
-          ],
-        },
-      });
     }
     if (data === "0000000000" || data === "1111111111") {
       const user = users[chatId];
@@ -96,13 +99,15 @@ const start = async () => {
   });
 };
 
-const port = 3000;
+if (process.env.NODE_ENV === "production") {
+  const app = express();
+  app.use(express.json());
+  app.use(webhookCallback(bot, "express"));
 
-const server = http.createServer((req, res) => {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Bot listening on port ${PORT}`);
+  });
+} else {
   start();
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "text/plain");
-  res.end("Hello World");
-});
-
-server.listen(port);
+}
