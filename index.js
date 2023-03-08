@@ -6,7 +6,7 @@ const externalUrl = "https://naebshchik.vercel.app";
 const bot = new TelegramApi(token, {
   webHook: { port: port, host: host },
 });
-bot.setWebHook(`${externalUrl}:${port}/bot${token}`);
+bot.setWebHook(`${externalUrl}:433/bot${token}`);
 
 // const bot = new TelegramApi(token, {
 //   polling: true,
